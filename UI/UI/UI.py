@@ -1,7 +1,6 @@
-from calendar import c
-from fileinput import filename
+from distutils.cmd import Command
 import os
-from logging import RootLogger
+import shutil 
 from time import strftime
 from tkinter import *
 from tkinter import filedialog   # This has all the code for GUIs.
@@ -11,16 +10,17 @@ import datetime as dt
 
 #Setting up the date and time
 date = dt.datetime.now()
-time = strftime('%H:%M')
+time = strftime('%H-%M')
 
-#Format of value
-
+#Global Variables
+global load1;
+global Name;
 
 #Functions used in the UI and button functions
 def center_window_on_screen():
-    x_cord = int((screen_width/2) - (width/2))
-    y_cord = int((screen_height/2) - (height/2))
-    root.geometry("{}x{}+{}+{}".format(width, height, x_cord, y_cord))
+    width = root.winfo_screenwidth()
+    hieght = root.winfo_screenheight()
+    root.geometry("%dx%d" % (width,hieght))
 
 #Function used for file browser
 def browseFiles ():
@@ -36,45 +36,63 @@ def browseFiles ():
     lbl_name.grid(row = 0, column = 1)
 
 def SelectDir ():
-    fileloc = filedialog.askdirectory(initialdir = r'C:\users', title = "Save location")
+    global Path1;
+    Path1 = filedialog.askdirectory(initialdir = r'C:\users', title = "Save location")
+    loc_lbl = Label(Frame8, text = Path1)
+    loc_lbl.grid(row = 1, column = 2)
+
 
 def return_to_menu():
     Frame6.forget()
     Frame7.forget()
     Frame1.pack(fill='both', expand =1)
-    root.geometry('500x400')
+    center_window_on_screen()
+    #root.geometry('500x400')
 
 def change_to_Frame2():
     Frame1.forget()
     Frame6.forget()
     Frame2.pack(fill='both', expand=1)
-    root.geometry('500x400')
+    center_window_on_screen()
+    #root.geometry('500x400')
 
 
 def view_data():
     Frame1.forget()
     Frame7.pack(fill='both', expand = 1)
-    root.geometry('700x600')
+    center_window_on_screen()
+    #root.geometry('700x600')
 
 def change_to_capture():
     Frame2.forget()
     Frame3.pack(fill='both', expand=1)
-    root.geometry('700x600')
+    center_window_on_screen()
+    #root.geometry('700x600')
 
 def processing():
     Frame3.forget()
     Frame4.pack(fill='both', expand=1)
-    root.geometry('500x400')
+    center_window_on_screen()
+    #root.geometry('500x400')
+
 
 def save_file():
     Frame5.forget()
     Frame6.pack(fill='both', expand=1)
-    root.geometry('500x400')
+    center_window_on_screen()
+    #root.geometry('500x400')
+    #img = open("Placeholder.jpg")
+    #save_path = "C:/Users/Berserk/Pictures/Test"
+    img_name = Name.get()
+    shutil.copy("Placeholder.jpg","C:/Users/Berserk/Pictures/Test/")
+    os.rename("C:/Users/Berserk/Pictures/Test/Placeholder.jpg","C:/Users/Berserk/Pictures/Test/"+img_name+".jpg")
+   
 
 def recapture():
     Frame5.forget()
     Frame3.pack(fill='both', expand=1)
-    root.geometry('700x600')
+    center_window_on_screen()
+    #root.geometry('700x600')
 
 def settings():
     Frame1.forget()
@@ -85,37 +103,41 @@ def settings():
     Frame6.forget()
     Frame7.forget()
     Frame8.pack(fill='both', expand = 1)
+    center_window_on_screen()
     
 def skip():
+    Frame3.forget()
     Frame4.forget()
     Frame5.pack(fill='both', expand=1)
+    center_window_on_screen()
+    #root.geometry('500x400')
 
 def TypeA():
     btn_A.configure(bg = "#A3CFE9")
     btn_B.configure(bg= '#D9D9D9')
     btn_C.configure(bg= '#D9D9D9')
-    name.delete(0, 'end')
-    name.insert(0,f'A_{date:%d/%b/%y}_{time}_xxx')
+    Name.delete(0, 'end')
+    Name.insert(0,f'A_{date:%d_%b_%y}_{time}_xxx')
+    center_window_on_screen()
     Frame2.pack()
-    
     
 def TypeB():
     btn_A.configure(bg = "#D9D9D9")
     btn_B.configure(bg= '#A3CFE9')
     btn_C.configure(bg= '#D9D9D9')
-    name.delete(0, 'end')
-    name.insert(0,f'B_{date:%d/%b/%y}_{time}_xxx')
+    Name.delete(0, 'end')
+    Name.insert(0,f'B_{date:%d_%b_%y}_{time}_xxx')
+    center_window_on_screen()
     Frame2.pack()
-
-
     
 def TypeC():
     Frame2.pack()
     btn_A.configure(bg = "#D9D9D9")
     btn_B.configure(bg= '#D9D9D9')
     btn_C.configure(bg= '#A3CFE9')
-    name.delete(0, 'end')
-    name.insert(0,f'C_{date:%d/%b/%y}_{time}_xxx')
+    Name.delete(0, 'end')
+    Name.insert(0,f'C_{date:%d_%b_%y}_{time}_xxx')
+    center_window_on_screen()
     Frame2.pack()
 
 def RTM():
@@ -127,11 +149,7 @@ def RTM():
     Frame7.forget()
     Frame8.forget()
     Frame1.pack(fill='both', expand =1)
-
-#format = 'A_{date:%d/%b/%y}_{time}_xxx'
-#name.insert(0, f'{date:%d/%b/%y}_{time}_xxx')
-
-    
+    center_window_on_screen()
 
 
 
@@ -140,7 +158,6 @@ def RTM():
 root = Tk()
 root.title("Crystal Mate")
 root.configure(bg='white')
-width, height = 500, 400
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 center_window_on_screen()
@@ -193,8 +210,8 @@ btn_B = Button(Frame2, text="B Mass",font=('Helvetica',10), bg= '#D9D9D9', fg='#
 btn_C = Button(Frame2, text="C Mass",font=('Helvetica',10), bg= '#D9D9D9', fg='#000000', command = TypeC)
 #Filename Labels
 lbl_heading = Label(Frame2,text='Filename:',bg= '#FFFFFF', font=("Helvetica", 16))
-name = Entry(Frame2, bg= '#D9D9D9', width = 25 )
-name.insert(0,f'{date:%d/%b/%y}_{time}_xxx')
+Name = Entry(Frame2, bg= '#D9D9D9', width = 25 )
+Name.insert(0,f'{date:%d_%b_%y}_{time}_xxx')
 #Save location button
 btn_S = Button(Frame2, text='...', bg='#D9D9D9', command = SelectDir)
 
@@ -205,19 +222,19 @@ btn_A.grid(row = 1, column = 1,padx = 180, pady = 15, sticky = W)
 btn_B.grid(row = 1, column = 1,pady = 15)
 btn_C.grid(row = 1, column = 1,padx = 180, pady = 15, sticky = E)
 lbl_heading.grid(row = 2, column = 1, sticky = W, padx = 110, pady = 15)
-name.grid(row = 2, column = 1, sticky = E, padx = 145, pady = 15)
+Name.grid(row = 2, column = 1, sticky = E, padx = 145, pady = 15)
 btn_S.grid(row = 2, column = 1, sticky = E, padx = 140, pady = 15)
 btn_capture.grid(row = 3, column = 1,padx = 95, pady = 10)
 
 
 #The widgets needed for Frame3 (The Capture page)
 Frame3.configure(bg="#FFFFFF")
-load = Image.open("Placeholder.jpg")
-load = load.resize((500,400))
+load1 = Image.open("Placeholder.jpg")
+load = load1.resize((500,400))
 render = ImageTk.PhotoImage(load)
 img1 = Label(Frame3, image = render)
 img1.image = render
-Capture_btn = Button(Frame3, text="Capture", font=("Helvetica", 10), bg='#D9D9D9',fg='#000000', height = 2, width = 10, command = processing)
+Capture_btn = Button(Frame3, text="Capture", font=("Helvetica", 10), bg='#D9D9D9',fg='#000000', height = 2, width = 10, command = skip)
 img1.grid(row = 0, column = 1, padx = 100, pady = 15)
 Capture_btn.grid(row = 1, column = 1, padx = 120, pady = 10)
 
@@ -231,7 +248,7 @@ temp_btn = Button(Frame4, text = 'Skip',font=("Helvetica", 10), bg='#D9D9D9',fg=
 
 #Frame 5 Data captured page
 Frame5.configure(bg="#FFFFFF")
-load = Image.open("Placeholder.jpg")
+load = Image.open("Placeholder2.png")
 load = load.resize((300,200))
 render = ImageTk.PhotoImage(load)
 Img = Label(Frame5, image = render)
@@ -250,6 +267,7 @@ Frame6.configure(bg="#FFFFFF")
 Heading = Label(Frame6, text="File Saved!", font=("Helvetica", 16),bg = "#FFFFFF",fg='#000000')
 btn1 = Button(Frame6, text="Return to main menu", font=("helvetica", 10), bg = '#D9D9D9',fg='#000000',height = 2, width = 20, command = return_to_menu)
 btn2 = Button(Frame6, text="Capture new sample", font=("helvetica", 10), bg='#D9D9D9',fg='#000000',height = 2, width = 20, command = change_to_Frame2)
+Err_lbl = Label()
 Heading.grid(row = 0, column = 1, pady = 20)
 btn1.grid(row = 1, column = 0, pady = 30, padx = 10)
 btn2.grid(row = 1, column = 2, pady = 30, padx = 15)
@@ -265,13 +283,14 @@ btn2.grid(row = 2, column = 2)
 
 #widegts for Frame 8 (settings page)
 Frame8.configure(bg='#FFFFFF')
-ImgSze= Label(Frame8, text="Image size", font=("Helvetica", 16),bg = "#FFFFFF",fg='#000000')
+ImgSze= Label(Frame8, text="Image size:", font=("Helvetica", 16),bg = "#FFFFFF",fg='#000000')
 RTM = Button(Frame8, text = 'Return',font=("helvetica", 10), bg='#D9D9D9',fg='#000000', command = RTM)
-ImgSze.grid(row = 0, column = 1, padx = 80, pady = 15)
-RTM.grid(row = 0, column = 0)
+
+# Widegts for Frame 8
+ImgSze.grid(row = 0, column = 1, pady = 15)
+RTM.grid(row = 2, column = 1)
 
 
 
 root.mainloop()
-
 
